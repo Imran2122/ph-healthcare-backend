@@ -1,11 +1,11 @@
 model Specialty {
-  id          String   @id @default(uuid(7))
-  title       String   @unique @db.VarChar(100)
-  description String?  @db.Text
-  icon        String?  @db.VarChar(255)
+  id          String  @id @default(uuid(7))
+  title       String  @unique @db.VarChar(100)
+  description String? @db.Text
+  icon        String? @db.VarChar(255)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   isDeleted Boolean   @default(false)
   deletedAt DateTime?
@@ -20,17 +20,14 @@ model Specialty {
 model DoctorSpecialty {
   id String @id @default(uuid())
 
-  doctorId String
+  doctorId    String
   specialtyId String
 
-  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade,onUpdate: Cascade)
-  specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade,onUpdate: Cascade)
-
+  doctor    Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  specialty Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([doctorId, specialtyId])
-
-  @@index([doctorId],name:"idx_doctor_speciaslty_doctorId")
-  @@index([specialtyId],name:"idx_doctor_speciaslty_specialtyId")
-
+  @@index([doctorId], name: "idx_doctor_speciaslty_doctorId")
+  @@index([specialtyId], name: "idx_doctor_speciaslty_specialtyId")
   @@map("doctor_specialties")
 }

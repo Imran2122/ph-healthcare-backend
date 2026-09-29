@@ -8,7 +8,7 @@ const router = Router();
 router.post("/", checkAuth(Role.ADMIN, Role.SUPPER_ADMIN), SpecialtyController.createSpeciality);
 router.get(
   "/",
- ,
+ 
   SpecialtyController.getAllSpeciality,
 );
 router.delete("/:id", checkAuth(Role.ADMIN, Role.SUPPER_ADMIN), SpecialtyController.deleteAllSpeciality);

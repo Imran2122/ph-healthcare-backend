@@ -55,10 +55,37 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     },
   });
 });
+// const getMe = catchAsync(async (req: Request, res: Response) => {
+//   const user = req.user;
 
+//   const result = await AuthService.getMe(user);
+
+//   sendResnponse(res, {
+//     httpStatusCode: status.OK,
+//     success: true,
+//     message: "Patient Login successfully",
+//     data: result,
+//   });
+// });
+
+const getMe = catchAsync(async (req: Request, res: Response) => {
+  console.log("REQ USER:", req.user);
+
+  const user = req.user;
+
+  const result = await AuthService.getMe(user);
+
+  sendResnponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "User information retrieved successfully",
+    data: result,
+  });
+});
 export const AuthController = {
   registerPatient,
   loginUser,
+  getMe,
 };
 
 // src\app\module\specialty\specialty.server.ts
