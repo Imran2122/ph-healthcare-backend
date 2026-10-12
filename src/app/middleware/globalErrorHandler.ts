@@ -6,8 +6,10 @@ import z from "zod";
 import { TErrorResponse, TErrorSources } from "../interface/error.interface";
 import { handleZodeError } from "../errorHelpers/handleZoodError";
 import AppError from "../errorHelpers/AppError";
+import { deleteImageFromCLoudinary } from "../../config/cloudinary.config";
+import { url } from "inspector";
 
-export const golbalErrorHandler = (
+export const golbalErrorHandler = async (
   error: any,
   req: Request,
   res: Response,
@@ -15,6 +17,15 @@ export const golbalErrorHandler = (
 ) => {
   if (envVars.NODE_ENV === "development") {
     console.log("Error from Golbal Error Hasndler", error);
+  }
+
+  if (req.file) {
+    await deleteImageFromCLoudinary(req.file.path);
+  }
+
+  if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+    const imagesUrls = req.files.map((file) => file.path);
+    await Promise.all(imagesUrls.map((url) => deleteImageFromCLoudinary(url)));
   }
 
   let errorSources: TErrorSources[] = [];

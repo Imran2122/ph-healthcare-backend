@@ -1,0 +1,159 @@
+import { addHours, addMinutes, format, setMinutes } from "date-fns";
+import {
+  ICreateSchedulePayload,
+  IUpdateSchedulePayload,
+} from "./schedule.interface";
+import { convertDateTime } from "./schedule.utils";
+import { Prisma, Schedule } from "../../../generated/prisma/client";
+import { prisma } from "../../lib/prisma";
+import { IQueryParams } from "../../interface/query.interface";
+import { QueryBuilder } from "../../utils/queryBuilders";
+import {
+  scheduleFilterableFields,
+  scheduleIncludeConfig,
+  scheduleSearchableFields,
+} from "./schedule.constant";
+
+const getAllSchedules = async (query: IQueryParams) => {
+  const queryBuilder = new QueryBuilder<
+    Schedule,
+    Prisma.ScheduleWhereInput,
+    Prisma.ScheduleInclude
+  >(prisma.schedule, query, {
+    searchableFields: scheduleSearchableFields,
+    filterrableFields: scheduleFilterableFields,
+  });
+
+  const result = await queryBuilder
+    .search()
+    .fields()
+    .filter()
+    .paginate()
+    .dynamicInclude(scheduleIncludeConfig)
+    .sort()
+    .execute();
+
+  return result;
+};
+
+const createSchedule = async (payload: ICreateSchedulePayload) => {
+  const { startDate, endDate, startTime, endTime } = payload;
+
+  const interrval = 30;
+
+  const currrtData = new Date(startDate);
+  const lastDate = new Date(endDate);
+
+  const schedules = [];
+
+  while (currrtData <= lastDate) {
+    const startDateTime = new Date(
+      addMinutes(
+        addHours(
+          `${format(currrtData, "yyyy-MM-dd")}`,
+          Number(startTime.split(".")[0]),
+        ),
+        Number(startTime.split(".")[1]),
+      ),
+    );
+    const endDateTime = new Date(
+      addMinutes(
+        addHours(
+          `${format(currrtData, "yyyy-MM-dd")}`,
+          Number(endTime.split(".")[0]),
+        ),
+        Number(endTime.split(".")[1]),
+      ),
+    );
+
+    while (startDate < endDate) {
+      const s = await convertDateTime(startDateTime);
+      const e = await convertDateTime(addMinutes(startDate, interrval));
+
+      const scheeduleDate = {
+        startDateTime: s,
+        endDateTime: e,
+      };
+      const existingSchedule = await prisma.schedule.findFirst({
+        where: {
+          startDateTime: scheeduleDate.startDateTime,
+          endDateTime: scheeduleDate.endDateTime,
+        },
+      });
+      if (!existingSchedule) {
+        const result = await prisma.schedule.create({
+          data: scheeduleDate,
+        });
+        schedules.push(result);
+      }
+
+      startDateTime.setMinutes(startDateTime.getMinutes() + interrval);
+    }
+
+    currrtData.setDate(currrtData.getDate() + 1);
+  }
+
+  return schedules;
+};
+const getScheduleById = async (id: string) => {
+  const schedule = await prisma.schedule.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  return schedule;
+};
+
+// refactoring - doctor's appointment or booked slot conflict check
+const updateSchedule = async (id: string, payload: IUpdateSchedulePayload) => {
+  const { startDate, endDate, startTime, endTime } = payload;
+  const startDateTime = new Date(
+    addMinutes(
+      addHours(
+        `${format(new Date(startDate), "yyyy-MM-dd")}`,
+        Number(startTime.split(":")[0]),
+      ),
+      Number(startTime.split(":")[1]),
+    ),
+  );
+
+  const endDateTime = new Date(
+    addMinutes(
+      addHours(
+        `${format(new Date(endDate), "yyyy-MM-dd")}`,
+        Number(endTime.split(":")[0]),
+      ),
+      Number(endTime.split(":")[1]),
+    ),
+  );
+
+  const updatedSchedule = await prisma.schedule.update({
+    where: {
+      id: id,
+    },
+    data: {
+      startDateTime: startDateTime,
+      endDateTime: endDateTime,
+    },
+  });
+
+  return updateSchedule;
+};
+
+const deleteSchedule = async (id: string) => {
+  await prisma.schedule.delete({
+    where: {
+      id: id,
+    },
+  });
+  return true;
+};
+
+export const ScheduleService = {
+  createSchedule,
+  getAllSchedules,
+  getScheduleById,
+  updateSchedule,
+  deleteSchedule,
+};
