@@ -39,58 +39,62 @@ const getAllSchedules = async (query: IQueryParams) => {
 const createSchedule = async (payload: ICreateSchedulePayload) => {
   const { startDate, endDate, startTime, endTime } = payload;
 
-  const interrval = 30;
+  const interval = 30;
 
-  const currrtData = new Date(startDate);
+  const currentDate = new Date(startDate);
   const lastDate = new Date(endDate);
 
   const schedules = [];
 
-  while (currrtData <= lastDate) {
+  while (currentDate <= lastDate) {
     const startDateTime = new Date(
       addMinutes(
         addHours(
-          `${format(currrtData, "yyyy-MM-dd")}`,
-          Number(startTime.split(".")[0]),
+          `${format(currentDate, "yyyy-MM-dd")}`,
+          Number(startTime.split(":")[0]),
         ),
-        Number(startTime.split(".")[1]),
+        Number(startTime.split(":")[1]),
       ),
     );
+
     const endDateTime = new Date(
       addMinutes(
         addHours(
-          `${format(currrtData, "yyyy-MM-dd")}`,
-          Number(endTime.split(".")[0]),
+          `${format(currentDate, "yyyy-MM-dd")}`,
+          Number(endTime.split(":")[0]),
         ),
-        Number(endTime.split(".")[1]),
+        Number(endTime.split(":")[1]),
       ),
     );
 
-    while (startDate < endDate) {
+    while (startDateTime < endDateTime) {
       const s = await convertDateTime(startDateTime);
-      const e = await convertDateTime(addMinutes(startDate, interrval));
+      const e = await convertDateTime(addMinutes(startDateTime, interval));
 
-      const scheeduleDate = {
+      const scheduleData = {
         startDateTime: s,
         endDateTime: e,
       };
+
       const existingSchedule = await prisma.schedule.findFirst({
         where: {
-          startDateTime: scheeduleDate.startDateTime,
-          endDateTime: scheeduleDate.endDateTime,
+          startDateTime: scheduleData.startDateTime,
+          endDateTime: scheduleData.endDateTime,
         },
       });
+
       if (!existingSchedule) {
         const result = await prisma.schedule.create({
-          data: scheeduleDate,
+          data: scheduleData,
         });
+        console.log(result);
         schedules.push(result);
       }
 
-      startDateTime.setMinutes(startDateTime.getMinutes() + interrval);
+      startDateTime.setMinutes(startDateTime.getMinutes() + interval);
     }
 
-    currrtData.setDate(currrtData.getDate() + 1);
+    currentDate.setDate(currentDate.getDate() + 1);
   }
 
   return schedules;
@@ -138,7 +142,7 @@ const updateSchedule = async (id: string, payload: IUpdateSchedulePayload) => {
     },
   });
 
-  return updateSchedule;
+ return updatedSchedule;
 };
 
 const deleteSchedule = async (id: string) => {

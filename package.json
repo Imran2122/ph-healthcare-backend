@@ -10,6 +10,7 @@
     "push": "prisma db push",
     "pull": "prisma db pull",
     "lint": "npx eslint ./src",
+    "stripe:webhook": "stripe listen --events checkout.session.completed,payment_intent.succeeded,payment_intent.payment_failed --forward-to localhost:5000/webhook",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -32,9 +33,11 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.4.0",
     "multer-storage-cloudinary": "^4.0.0",
+    "node-cron": "^4.6.0",
     "nodemailer": "^10.0.13",
     "pg": "^8.23.0",
     "qs": "^6.16.0",
+    "stripe": "^23.0.0",
     "zod": "^4.6.5"
   },
   "devDependencies": {

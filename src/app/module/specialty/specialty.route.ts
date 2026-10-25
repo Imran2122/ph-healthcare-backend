@@ -10,7 +10,7 @@ const router = Router();
 
 router.post(
   "/",
-  // checkAuth(Role.ADMIN, Role.SUPPER_ADMIN),
+  checkAuth(Role.ADMIN, Role.SUPPER_ADMIN),
   multerUpload.single("file"),
   validateRequest(SpecialtyValidation.createSpecialityZodSchema),
   SpecialtyController.createSpeciality,

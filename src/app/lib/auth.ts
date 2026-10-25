@@ -92,6 +92,20 @@ export const auth = betterAuth({
             },
           });
 
+          if (!user) {
+            console.error(
+              `user with email ${email} not found.cannor sent email`,
+            );
+            return;
+          }
+
+          if (user && user.role === Role.SUPPER_ADMIN) {
+            console.log(
+              `user with email ${email} is a supper adminskipping sending the verification otp`,
+            );
+            return;
+          }
+
           if (user && !user.emailVerified) {
             sendMail({
               to: email,

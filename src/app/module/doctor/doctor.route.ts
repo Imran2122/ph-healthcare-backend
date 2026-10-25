@@ -1,9 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { DoctorController } from "./doctor.controller";
-import z from "zod";
-import { Gender } from "../../../generated/prisma/enums";
-import { validateRequest } from "../../middleware/validateRequest";
-import { updateDoctorZodSchema } from "./doctor.validation";
+
 
 const router = Router();
 
