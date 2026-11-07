@@ -115,6 +115,7 @@ const getDoctorScheduleById = async (doctorId: string, scheduleId: string) => {
   const doctorSchedule = await prisma.doctorSchedules.findUnique({
     where: {
       doctorId_scheduleId: {
+        
         doctorId: doctorId,
         scheduleId: scheduleId,
       },
@@ -187,6 +188,36 @@ const deleteMyDoctorSchedule = async (id: string, user: IRequestUser) => {
   });
 };
 
+
+const getAvailableDoctorSchedules = async (query: IQueryParams) => {
+  const queryBuilder = new QueryBuilder<
+    DoctorSchedules,
+    Prisma.DoctorSchedulesWhereInput,
+    Prisma.DoctorSchedulesInclude
+  >(prisma.doctorSchedules, query, {
+    filterrableFields: doctorScheduleFilterableFields,
+    searchableFields: doctorScheduleSearchableFields,
+  });
+
+  return await queryBuilder
+    .search()
+    .filter()
+    .paginate()
+    .include({
+      schedule: true,
+      doctor: {
+        include: {
+          user: true,
+        },
+      },
+    })
+    .sort()
+    .fields()
+    .dynamicInclude(doctorScheduleIncludeConfig)
+    .execute();
+};
+
+
 export const DoctorScheduleService = {
   createMyDoctorSchedule,
   getAllDoctorSchedules,
@@ -194,4 +225,5 @@ export const DoctorScheduleService = {
   updateMyDoctorSchedule,
   deleteMyDoctorSchedule,
   getMyDoctorSchedules,
+  getAvailableDoctorSchedules,
 };

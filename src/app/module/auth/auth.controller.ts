@@ -7,10 +7,9 @@ import status from "http-status";
 import { tokenUtils } from "../../utils/token";
 import AppError from "../../errorHelpers/AppError";
 import { CookieUtils } from "../../utils/cookie";
-import { email } from "zod";
-import { ota } from "zod/locales";
+
 import { envVars } from "../../../config/env";
-import { betterAuth } from "better-auth";
+
 
 const registerPatient = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
@@ -52,7 +51,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   sendResnponse(res, {
     httpStatusCode: status.OK,
     success: true,
-    message: "Patient Login successfully",
+      message: "User logged in successfully",
     data: {
       token,
       accessToken,
@@ -61,18 +60,6 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     },
   });
 });
-// const getMe = catchAsync(async (req: Request, res: Response) => {
-//   const user = req.user;
-
-//   const result = await AuthService.getMe(user);
-
-//   sendResnponse(res, {
-//     httpStatusCode: status.OK,
-//     success: true,
-//     message: "Patient Login successfully",
-//     data: result,
-//   });
-// });
 
 const getMe = catchAsync(async (req: Request, res: Response) => {
   console.log("REQ USER:", req.user);

@@ -34,14 +34,8 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
   });
 
   if (userExist) {
-    throw new Error("User Already exist");
-
-     throw new AppError(
-        status.NOT_FOUND,
-        `set user Already exist`,
-      );
+    throw new AppError(status.CONFLICT, "User already exists");
   }
-
 
   // user create using better auth
   const userData = await auth.api.signUpEmail({
@@ -130,11 +124,18 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
 
     return result;
   } catch (error) {
-    await prisma.user.delete({
-      where: {
-        id: userData.user.id,
-      },
-    });
+    console.error("Create doctor error:", error);
+
+    try {
+      await prisma.user.delete({
+        where: {
+          id: userData.user.id,
+        },
+      });
+    } catch (cleanupError) {
+      console.error("Cleanup error:", cleanupError);
+    }
+
     throw error;
   }
 };

@@ -28,4 +28,11 @@ router.delete(
   AdminController.deletaAdmin,
 );
 
+router.patch("/change-user-status", 
+    checkAuth(Role.SUPPER_ADMIN, Role.ADMIN),
+     AdminController.changeUserStatus);
+router.patch("/change-user-role",
+     checkAuth(Role.SUPPER_ADMIN),
+     AdminController.changeUserRole);
+
 export const AdminRoutes = router;

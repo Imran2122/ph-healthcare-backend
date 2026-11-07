@@ -78,6 +78,23 @@ const deleteMyDoctorSchedule = catchAsync(async (req: Request, res: Response) =>
     });
 });
 
+const getAvailableDoctorSchedules = catchAsync(
+  async (req: Request, res: Response) => {
+    const result =
+      await DoctorScheduleService.getAvailableDoctorSchedules(
+        req.query as IQueryParams,
+      );
+
+    sendResnponse(res, {
+      success: true,
+      httpStatusCode: status.OK,
+      message: "Available doctor schedules retrieved successfully",
+      data: result.data,
+      meta: result.meta,
+    });
+  },
+);
+
 
 export const DoctorScheduleController = {
     createMyDoctorSchedule,
@@ -85,5 +102,6 @@ export const DoctorScheduleController = {
     getAllDoctorSchedules,
     getDoctorScheduleById,
     updateMyDoctorSchedule,
-    deleteMyDoctorSchedule
+    deleteMyDoctorSchedule,
+    getAvailableDoctorSchedules
 }

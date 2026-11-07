@@ -3,8 +3,9 @@ import { catchAsync } from "../../../shared/catchAsync";
 import { envVars } from "../../../config/env";
 import status from "http-status";
 import { stripe } from "../../../config/stripe.config";
-import { paymentService } from "./payment.service";
+
 import { sendResnponse } from "../../../shared/sendResponse";
+import { PaymentService } from "./payment.service";
 
 const handleStripeWebHookEvent = catchAsync(
   async (req: Request, res: Response) => {
@@ -35,7 +36,7 @@ const handleStripeWebHookEvent = catchAsync(
     }
 
     try {
-      const result = await paymentService.handleStripeWebHookEvent(event);
+      const result = await PaymentService.handlerStripeWebhookEvent(event);
 
       return sendResnponse(res, {
         success: true,

@@ -2,7 +2,7 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import { prisma } from "./app/lib/prisma";
 import { SpecialtyRoutes } from "./app/module/specialty/specialty.route";
 import { IndexRoutes } from "./app/routes";
-import { golbalErrorHandler } from "./app/middleware/globalErrorHandler";
+// import { golbalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
 import cookieParser from "cookie-parser";
 import { toNodeHandler } from "better-auth/node";
@@ -19,6 +19,7 @@ import cors from "cors";
 import { envVars } from "./config/env";
 import { paymentController } from "./app/module/payment/payment.controller";
 import { AppointmentService } from "./app/module/appointment/appointment.service";
+import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 
 app.use("/api/auth", toNodeHandler(auth));
 // Enable URL-encoded form data parsing
@@ -77,6 +78,6 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 app.use(notFound);
-app.use(golbalErrorHandler);
+app.use(globalErrorHandler)
 
 export default app;

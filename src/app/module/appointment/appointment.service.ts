@@ -463,10 +463,12 @@ const cancelUnpaidAppointments = async () => {
 };
 
 export const AppointmentService = {
+  bookAppointment,
   getMyAppointments,
   changeAppointmentStatus,
   getMySingleAppointment,
   getAllAppointments,
   bookAppointmentWithPayLater,
+  initiatePayment,
   cancelUnpaidAppointments,
 };

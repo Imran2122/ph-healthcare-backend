@@ -46,7 +46,7 @@ export const sendMail = async ({
       html: html,
       attachments: attachements?.map((attachement) => ({
         filename: attachement.fileName,
-        conttent: attachement.content,
+        content: attachement.content,
         contentType: attachement.contentType,
       })),
     });

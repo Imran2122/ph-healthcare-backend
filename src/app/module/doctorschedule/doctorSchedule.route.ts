@@ -5,7 +5,6 @@ import { DoctorScheduleController } from "./doctorSchedule.controller";
 import { checkAuth } from "../../middleware/chackAuth";
 
 const router = Router();
-
 router.post(
   "/create-my-doctor-schedule",
   checkAuth(Role.DOCTOR),
@@ -15,6 +14,12 @@ router.get(
   "/my-doctor-schedules",
   checkAuth(Role.DOCTOR),
   DoctorScheduleController.getMyDoctorSchedules,
+);
+
+router.get(
+  "/available-doctor-schedules",
+  checkAuth(Role.PATIENT),
+  DoctorScheduleController.getAvailableDoctorSchedules,
 );
 router.get(
   "/",
